@@ -30,6 +30,7 @@
     },
     "plugins": [
       "expo-router",
+      "./plugins/withAppsFlyerKotlinFix",
       "react-native-appsflyer",
       [
         "expo-tracking-transparency",
