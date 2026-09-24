@@ -21,7 +21,9 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "permissions": ["com.google.android.gms.permission.AD_ID"]
+      "permissions": [
+        "com.google.android.gms.permission.AD_ID"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -35,6 +37,13 @@
           "userTrackingPermission": "This lets us measure the performance of our marketing campaigns."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "3dcffb82-615f-431a-8c1e-551e573049df"
+      }
+    },
+    "owner": "stefanoelis-team"
   }
 }
