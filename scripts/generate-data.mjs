@@ -64,9 +64,28 @@ if (missing.length) {
 // (e.g. assets/products/watch-gold.png -> assets_products_watchgold). Two files
 // that differ only by extension collide during mergeReleaseResources. Fail here
 // with a clear message instead of deep in a cloud Gradle build.
+// Android's AAPT compiles assets by their file extension, not their content.
+// A JPEG saved as ".png" (or vice versa) makes AAPT fail with
+// "file failed to compile". Detect the real type from magic bytes and fail here.
+function realImageExt(file) {
+  const head = fs.readFileSync(path.join(IMAGES_DIR, file)).subarray(0, 4);
+  if (head[0] === 0x89 && head[1] === 0x50) return 'png'; // \x89PNG
+  if (head[0] === 0xff && head[1] === 0xd8) return 'jpg'; // JPEG SOI
+  return null;
+}
+
 const flat = (f) => f.replace(/\.[^.]*$/, '').replace(/[^a-z0-9]/gi, '').toLowerCase();
 const seen = new Map();
 for (const f of imageFiles) {
+  const declared = f.split('.').pop().toLowerCase().replace('jpeg', 'jpg');
+  const actual = realImageExt(f);
+  if (actual && declared !== actual) {
+    throw new Error(
+      `Image "${f}" is declared .${declared} but its content is ${actual.toUpperCase()}. ` +
+        `Android's AAPT will reject it. Re-encode it to a real .${declared} ` +
+        `(e.g. sips -s format ${declared === 'jpg' ? 'jpeg' : 'png'} <file> --out <file>).`
+    );
+  }
   const key = flat(f);
   if (seen.has(key)) {
     throw new Error(
