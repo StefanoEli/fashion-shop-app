@@ -18,6 +18,10 @@ screens ──logEvent(canonical)──▶ TrackingManager ──▶ AppsFlyerPr
 - Run more than one at once → enable multiple (simultaneous fan-out).
 - Add a brand-new MMP → new adapter in `lib/tracking/providers/` + one config entry. No screen changes.
 
+**AppsFlyer and Adjust are already installed** (compiled into every native build); you just
+enable them at runtime from the in-app **Admin** (⚙️) or `.env`. To enable an installed MMP or
+add a brand-new one, see **[docs/ADDING-AN-MMP.md](docs/ADDING-AN-MMP.md)**.
+
 ## Canonical events
 
 `view_item`, `view_item_list`, `add_to_cart`, `view_cart`, `begin_checkout`, `purchase` (see [`lib/tracking/types.ts`](lib/tracking/types.ts)). Per-provider mapping lives in each adapter, e.g. AppsFlyer `purchase → af_purchase`, Adjust `purchase → <event token>`.

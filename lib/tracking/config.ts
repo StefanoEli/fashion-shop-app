@@ -48,7 +48,9 @@ function parseAdjustTokens(): Partial<Record<CanonicalEventName, string>> {
   }
 }
 
-export const PROVIDERS_CONFIG: ProvidersConfig = {
+// Defaults built from env vars. The admin screen can override these at runtime
+// (persisted on device) — see settings.ts.
+export const ENV_PROVIDERS_CONFIG: ProvidersConfig = {
   appsflyer: {
     enabled: bool('EXPO_PUBLIC_AF_ENABLED', true),
     devKey: env('EXPO_PUBLIC_AF_DEV_KEY'),

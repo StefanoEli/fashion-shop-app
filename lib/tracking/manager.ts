@@ -2,9 +2,9 @@
 // forwards every canonical event to all of them. Per-provider errors are
 // isolated so one failing MMP never breaks the others (or the UI).
 
-import { PROVIDERS_CONFIG } from './config';
 import { createAdjustProvider } from './providers/adjust';
 import { createAppsFlyerProvider } from './providers/appsflyer';
+import { getSettings } from './settings';
 import type { CanonicalEvent, TrackingProvider } from './types';
 
 export type EventLogEntry = {
@@ -22,10 +22,22 @@ class TrackingManager {
   init(): void {
     if (this.started) return;
     this.started = true;
+    this.buildAndInit();
+  }
 
+  /** Rebuild providers from the current settings and (re)initialize them.
+   *  Used by the admin after saving config. Note: some native SDKs fully apply
+   *  new credentials only on a fresh app launch. */
+  reinit(): void {
+    this.started = true;
+    this.buildAndInit();
+  }
+
+  private buildAndInit(): void {
+    const cfg = getSettings();
     const candidates: Array<[boolean, () => TrackingProvider]> = [
-      [PROVIDERS_CONFIG.appsflyer.enabled, () => createAppsFlyerProvider(PROVIDERS_CONFIG.appsflyer)],
-      [PROVIDERS_CONFIG.adjust.enabled, () => createAdjustProvider(PROVIDERS_CONFIG.adjust)],
+      [cfg.appsflyer.enabled, () => createAppsFlyerProvider(cfg.appsflyer)],
+      [cfg.adjust.enabled, () => createAdjustProvider(cfg.adjust)],
     ];
 
     this.providers = candidates.filter(([on]) => on).map(([, make]) => make());
@@ -40,6 +52,11 @@ class TrackingManager {
     console.log(
       `[tracking] initialized providers: ${this.providers.map((p) => p.key).join(', ') || '(none)'}`,
     );
+  }
+
+  clearLog(): void {
+    this.log = [];
+    this.listeners.forEach((fn) => fn(this.log));
   }
 
   track(event: CanonicalEvent): void {

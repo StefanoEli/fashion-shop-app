@@ -4,11 +4,14 @@
 
 import type { Product } from '../../data/catalog';
 import { tracking } from './manager';
+import { loadSettings } from './settings';
 import type { CanonicalItem } from './types';
 
 export { tracking } from './manager';
 export type { EventLogEntry } from './manager';
 export type { CanonicalEvent } from './types';
+export { getSettings, saveSettings, resetSettings, loadSettings } from './settings';
+export type { ProvidersConfig } from './config';
 
 const CURRENCY = 'EUR';
 
@@ -36,8 +39,15 @@ function itemFromLine(line: CartLine): CanonicalItem {
   };
 }
 
-export function initTracking(): void {
+export async function initTracking(): Promise<void> {
+  // Load any device-persisted admin overrides before starting the SDKs.
+  await loadSettings();
   tracking.init();
+}
+
+/** Re-apply provider settings after an admin edit. */
+export function reinitTracking(): void {
+  tracking.reinit();
 }
 
 export function trackViewItem(product: Product): void {

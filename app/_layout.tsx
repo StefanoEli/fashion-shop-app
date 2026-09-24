@@ -20,7 +20,7 @@ async function requestAttThenInit() {
       console.warn('[att] request failed', e);
     }
   }
-  initTracking();
+  await initTracking();
 }
 
 export default function RootLayout() {
@@ -46,7 +46,7 @@ export default function RootLayout() {
           <Stack.Screen name="cart" options={{ title: 'Cart' }} />
           <Stack.Screen name="checkout" options={{ title: 'Checkout' }} />
           <Stack.Screen name="thank-you" options={{ title: 'Order confirmed' }} />
-          <Stack.Screen name="settings" options={{ title: 'Tracking' }} />
+          <Stack.Screen name="settings" options={{ title: 'Admin' }} />
         </Stack>
       </CartProvider>
     </SafeAreaProvider>
